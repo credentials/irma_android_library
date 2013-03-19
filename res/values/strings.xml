@@ -1,5 +1,7 @@
 <resources>
 
    	<string name="app_name">irma_android_util</string>
+   	<string name="pinhint">PIN</string>
+	<string name="pinmessage">Please enter your IRMA pincode</string>
 
 </resources>
