@@ -161,4 +161,22 @@ public class AndroidWalker implements TreeWalkerI {
 
 		return logo;
 	}
+	
+	public Bitmap getVerificationLogo(VerificationDescription verification) {
+		Bitmap logo = null;
+		// TODO: is this correct?
+		String issuerID = verification.getIssuerID();
+
+		try {
+			logo = BitmapFactory.decodeStream(retrieveFile(new URI(issuerID + "/logo.png")));
+		} catch (InfoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return logo;
+	}
 }
