@@ -31,6 +31,7 @@ import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
 import org.irmacard.credentials.info.TreeWalkerI;
+import org.irmacard.credentials.info.VerificationDescription;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -74,6 +75,28 @@ public class AndroidWalker implements TreeWalkerI {
 			new InfoException(e,
 					"Failed to read (from) android/issuers.txt file");
 		}
+
+		try {
+			s = assetManager.open(IRMA_CORE + "android/verifiers.txt");
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(s));
+			String issuer = null;
+			while ((issuer = in.readLine()) != null) {
+				// FIXME: this will duplicate stuff in the store, or at least do extra work.
+				Log.i("filecontent", "Found verifier: " + issuer);
+				String issuerDesc = IRMA_CORE + issuer + "/description.xml";
+
+				Log.i("filecontent", "Parsing log of: " + issuerDesc);
+				IssuerDescription id = new IssuerDescription(assetManager.open(issuerDesc));
+				descriptionStore.addIssuerDescription(id);
+				Log.i("filecontent", "Issuer added to result");
+
+				tryProcessVerifications(issuer);
+			}
+		} catch (IOException e) {
+			new InfoException(e,
+					"Failed to read (from) android/issuers.txt file");
+		}
 	}
 	
 	private void tryProcessCredentials(String issuer) throws InfoException {
@@ -91,6 +114,24 @@ public class AndroidWalker implements TreeWalkerI {
 		} catch (IOException e) {
 			new InfoException(e,
 					"Failed to read credentials issued by " + issuer + ".");
+		}
+	}
+	
+	private void tryProcessVerifications(String verifier) throws InfoException {
+		String path = IRMA_CORE + verifier + "/Verifies";
+
+		try {
+			Log.i("credential", "Examining path " + path);
+			for(String cred : assetManager.list(path)) {
+				String proofSpec = path + "/" + cred + "/description.xml";
+				Log.i("issuer+credential", "Reading proofSpec " + proofSpec);
+				VerificationDescription vd = new VerificationDescription(assetManager.open(proofSpec));
+				descriptionStore.addVerificationDescription(vd);
+				Log.i("credential", vd.toString());
+			}
+		} catch (IOException e) {
+			new InfoException(e,
+					"Failed to read verifications used by " + verifier + ".");
 		}
 	}
 
