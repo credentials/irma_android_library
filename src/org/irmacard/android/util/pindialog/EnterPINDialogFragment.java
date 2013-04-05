@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class EnterPINDialogFragment extends DialogFragment {
+	private static final String EXTRA_TRIES = "irma_library.EnterPINDialogFragment.tries";
 	
 	public interface PINDialogListener {
 		public void onPINEntry(String pincode);
@@ -21,6 +23,29 @@ public class EnterPINDialogFragment extends DialogFragment {
 	}
 
     PINDialogListener mListener;
+    int tries;
+
+	public static EnterPINDialogFragment getInstance(int tries) {
+        EnterPINDialogFragment f = new EnterPINDialogFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_TRIES, tries);
+        f.setArguments(args);
+
+        return f;
+	}
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+
+    	// For backward compatibility
+    	if(getArguments().containsKey(EXTRA_TRIES)) {
+    		tries = getArguments().getInt(EXTRA_TRIES);
+    	} else {
+    		tries = -1;
+    	}
+    }
 	
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -47,6 +72,17 @@ public class EnterPINDialogFragment extends DialogFragment {
         // Make sure that the keyboard is always shown and doesn't require an additional touch
         // to focus the TextEdit view.
         dialog.getWindow().setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        TextView error_field = (TextView) dialogView.findViewById(R.id.enterpin_error);
+        EditText pin_field = (EditText) dialogView.findViewById(R.id.pincode);
+
+        if(tries != -1) {
+        	error_field.setVisibility(View.VISIBLE);
+        	error_field.setText(getResources().getQuantityString(R.plurals.error_tries_left, tries, tries));
+        }
+
+        pin_field.requestFocus();
+
         return dialog;
     }
     

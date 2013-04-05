@@ -3,5 +3,8 @@
    	<string name="app_name">irma_android_util</string>
    	<string name="pinhint">PIN</string>
 	<string name="pinmessage">Please enter your IRMA pincode</string>
-
+	<plurals name="error_tries_left">
+	    <item quantity="one">Pin Incorrect! You have one try left.</item>
+	    <item quantity="other">Pin Incorrect! You have %d tries left.</item>
+	</plurals>
 </resources>
