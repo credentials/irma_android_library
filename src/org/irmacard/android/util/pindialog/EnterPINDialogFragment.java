@@ -8,11 +8,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class EnterPINDialogFragment extends DialogFragment {
 	private static final String EXTRA_TRIES = "irma_library.EnterPINDialogFragment.tries";
@@ -24,6 +27,7 @@ public class EnterPINDialogFragment extends DialogFragment {
 
     PINDialogListener mListener;
     int tries;
+	private AlertDialog dialog;
 
 	public static EnterPINDialogFragment getInstance(int tries) {
         EnterPINDialogFragment f = new EnterPINDialogFragment();
@@ -46,7 +50,17 @@ public class EnterPINDialogFragment extends DialogFragment {
     		tries = -1;
     	}
     }
-	
+
+    private void okOnDialog(View dialogView) {
+        EditText et = (EditText)dialogView.findViewById(R.id.pincode);
+        String pincodeText = et.getText().toString();
+        mListener.onPINEntry(pincodeText);
+    }
+
+    private void dismissDialog() {
+        dialog.dismiss();
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
@@ -57,9 +71,7 @@ public class EnterPINDialogFragment extends DialogFragment {
         	.setTitle("Enter PIN")
 	           .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 	               public void onClick(DialogInterface dialog, int id) {
-	                   EditText et = (EditText)dialogView.findViewById(R.id.pincode);
-	                   String pincodeText = et.getText().toString();
-	                   mListener.onPINEntry(pincodeText);
+	                  okOnDialog(dialogView);
 	               }
 	           })
 	           .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -68,13 +80,24 @@ public class EnterPINDialogFragment extends DialogFragment {
 	               }
 	           });
         // Create the AlertDialog object and return it
-        Dialog dialog = builder.create();
+        dialog = builder.create();
         // Make sure that the keyboard is always shown and doesn't require an additional touch
         // to focus the TextEdit view.
         dialog.getWindow().setSoftInputMode (WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         TextView error_field = (TextView) dialogView.findViewById(R.id.enterpin_error);
         EditText pin_field = (EditText) dialogView.findViewById(R.id.pincode);
+        pin_field.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+						|| (actionId == EditorInfo.IME_ACTION_DONE)) {
+					okOnDialog(dialogView);
+					dismissDialog();
+				}
+				return false;
+            }
+        });
 
         if(tries != -1) {
         	error_field.setVisibility(View.VISIBLE);
