@@ -103,7 +103,10 @@ public class EnterPINDialogFragment extends DialogFragment {
         	error_field.setVisibility(View.VISIBLE);
         	error_field.setText(getResources().getQuantityString(R.plurals.error_tries_left, tries, tries));
         }
-
+        
+        // prevent cancelling the dialog by pressing outside the bounds
+        dialog.setCanceledOnTouchOutside(false);
+        
         pin_field.requestFocus();
 
         return dialog;
