@@ -53,10 +53,12 @@ public class AndroidWalker implements TreeWalkerI {
 	public void parseConfiguration(DescriptionStore descriptionStore)
 			throws InfoException {
 		this.descriptionStore = descriptionStore;
+		Log.i("parseConfiguration", "Android Walker parsing started!");
 		
 		InputStream s;
 		try {
 			s = assetManager.open(IRMA_CORE + "android/issuers.txt");
+			Log.i("AW", "Issuers file opened");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(s));
 			String issuer = null;
@@ -72,6 +74,7 @@ public class AndroidWalker implements TreeWalkerI {
 				tryProcessCredentials(issuer);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			new InfoException(e,
 					"Failed to read (from) android/issuers.txt file");
 		}
@@ -94,8 +97,9 @@ public class AndroidWalker implements TreeWalkerI {
 				tryProcessVerifications(issuer);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			new InfoException(e,
-					"Failed to read (from) android/issuers.txt file");
+					"Failed to read (from) android/verifiers.txt file");
 		}
 	}
 	
