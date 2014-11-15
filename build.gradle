@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
+
+version = 0.8
+group = "org.irmacard.android"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.13.3'
+        classpath 'com.github.dcendents:android-maven-plugin:1.1'
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "https://credentials.github.io/repos/maven2/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.irmacard.credentials:credentials_idemix:0.8"
+}
+
+android {
+    compileSdkVersion 14
+    buildToolsVersion "19.1"
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+
+    lintOptions {
+        // Ignore external package references
+        disable 'InvalidPackage'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+uploadArchives.repositories.mavenDeployer {
+    repository(url: mavenRepositoryIRMA )
+}
