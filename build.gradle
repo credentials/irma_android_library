@@ -50,6 +50,8 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.1'
 }
 
-uploadArchives.repositories.mavenDeployer {
-    repository(url: mavenRepositoryIRMA )
+if ( project.hasProperty("mavenRepositoryIRMA") ) {
+    uploadArchives.repositories.mavenDeployer {
+        repository(url: mavenRepositoryIRMA)
+    }
 }
