@@ -14,7 +14,7 @@ This library has the following dependencies.  All these dependencies will be aut
 
 Internal dependencies:
 
- * [credentials_idemix](https://github.com/credentials_idemix/), The IRMA credentials API implementation for Idemix
+ * [credentials_idemix](https://github.com/credentials/credentials_idemix/), The IRMA credentials API implementation for Idemix
 
 The build system depends on gradle version at least 2.1, which is why we've included the gradle wrapper, so you always have the right version.
 
