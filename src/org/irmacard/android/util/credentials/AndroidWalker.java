@@ -25,6 +25,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.irmacard.credentials.info.CredentialDescription;
 import org.irmacard.credentials.info.DescriptionStore;
@@ -57,49 +61,46 @@ public class AndroidWalker implements TreeWalkerI {
 		
 		InputStream s;
 		try {
-			s = assetManager.open(IRMA_CORE + "android/issuers.txt");
-			Log.i("AW", "Issuers file opened");
+			List<String> issuers = new ArrayList<String>();
+			List<String> verifiers = new ArrayList<String>();
+			Set<String> allEntities = new HashSet<String>();
+			String line = null;
 
+			s = assetManager.open(IRMA_CORE + "android/issuers.txt");
 			BufferedReader in = new BufferedReader(new InputStreamReader(s));
-			String issuer = null;
-			while ((issuer = in.readLine()) != null) {
-				Log.i("filecontent", "Found issuer: " + issuer);
-				String issuerDesc = IRMA_CORE + issuer + "/description.xml";
-				
+			while ((line = in.readLine()) != null)
+				issuers.add(line);
+
+			s = assetManager.open(IRMA_CORE + "android/verifiers.txt");
+			in = new BufferedReader(new InputStreamReader(s));
+			while ((line = in.readLine()) != null)
+				verifiers.add(line);
+
+			allEntities.addAll(issuers);
+			allEntities.addAll(verifiers); // allEntities is a Set which ignore duplicates
+
+			for (String i: allEntities) {
+				Log.i("filecontent", "Found issuer: " + i);
+				String issuerDesc = IRMA_CORE + i + "/description.xml";
+
 				Log.i("filecontent", "Parsing log of: " + issuerDesc);
 				IssuerDescription id = new IssuerDescription(assetManager.open(issuerDesc));
 				descriptionStore.addIssuerDescription(id);
 				Log.i("filecontent", "Issuer added to result");
-				
+			}
+
+			for (String issuer: issuers) {
 				tryProcessCredentials(issuer);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			new InfoException(e,
-					"Failed to read (from) android/issuers.txt file");
-		}
 
-		try {
-			s = assetManager.open(IRMA_CORE + "android/verifiers.txt");
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(s));
-			String issuer = null;
-			while ((issuer = in.readLine()) != null) {
-				// FIXME: this will duplicate stuff in the store, or at least do extra work.
-				Log.i("filecontent", "Found verifier: " + issuer);
-				String issuerDesc = IRMA_CORE + issuer + "/description.xml";
-
-				Log.i("filecontent", "Parsing log of: " + issuerDesc);
-				IssuerDescription id = new IssuerDescription(assetManager.open(issuerDesc));
-				descriptionStore.addIssuerDescription(id);
-				Log.i("filecontent", "Issuer added to result");
-
-				tryProcessVerifications(issuer);
+			for (String verifier: verifiers) {
+				tryProcessVerifications(verifier);
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			new InfoException(e,
-					"Failed to read (from) android/verifiers.txt file");
+					"Failed to read (from) android/issuers.txt or android/verifiers.txt file");
 		}
 	}
 	
