@@ -99,7 +99,7 @@ public class AndroidWalker implements TreeWalkerI {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			new InfoException(e,
+			throw new InfoException(e,
 					"Failed to read (from) android/issuers.txt or android/verifiers.txt file");
 		}
 	}
@@ -117,7 +117,7 @@ public class AndroidWalker implements TreeWalkerI {
 				Log.i("credential", cd.toString());
 			}
 		} catch (IOException e) {
-			new InfoException(e,
+			throw new InfoException(e,
 					"Failed to read credentials issued by " + issuer + ".");
 		}
 	}
@@ -135,7 +135,7 @@ public class AndroidWalker implements TreeWalkerI {
 				Log.i("credential", vd.toString());
 			}
 		} catch (IOException e) {
-			new InfoException(e,
+			throw new InfoException(e,
 					"Failed to read verifications used by " + verifier + ".");
 		}
 	}
