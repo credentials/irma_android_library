@@ -80,13 +80,9 @@ public class AndroidWalker implements TreeWalkerI {
 			allEntities.addAll(verifiers); // allEntities is a Set which ignore duplicates
 
 			for (String i: allEntities) {
-				Log.i("filecontent", "Found issuer: " + i);
 				String issuerDesc = IRMA_CORE + i + "/description.xml";
-
-				Log.i("filecontent", "Parsing log of: " + issuerDesc);
 				IssuerDescription id = new IssuerDescription(assetManager.open(issuerDesc));
 				descriptionStore.addIssuerDescription(id);
-				Log.i("filecontent", "Issuer added to result");
 			}
 
 			for (String issuer: issuers) {
@@ -108,13 +104,10 @@ public class AndroidWalker implements TreeWalkerI {
 		String path = IRMA_CORE + issuer + "/Issues";
 		
 		try {
-			Log.i("credential", "Examining path " + path);
 			for(String cred : assetManager.list(path)) {
 				String credentialSpec = path + "/" + cred + "/description.xml";
-				Log.i("issuer+credential", "Reading credential " + credentialSpec);
 				CredentialDescription cd = new CredentialDescription(assetManager.open(credentialSpec));
 				descriptionStore.addCredentialDescription(cd);
-				Log.i("credential", cd.toString());
 			}
 		} catch (IOException e) {
 			throw new InfoException(e,
@@ -126,13 +119,10 @@ public class AndroidWalker implements TreeWalkerI {
 		String path = IRMA_CORE + verifier + "/Verifies";
 
 		try {
-			Log.i("credential", "Examining path " + path);
 			for(String cred : assetManager.list(path)) {
 				String proofSpec = path + "/" + cred + "/description.xml";
-				Log.i("issuer+credential", "Reading proofSpec " + proofSpec);
 				VerificationDescription vd = new VerificationDescription(assetManager.open(proofSpec));
 				descriptionStore.addVerificationDescription(vd);
-				Log.i("credential", vd.toString());
 			}
 		} catch (IOException e) {
 			throw new InfoException(e,
@@ -145,7 +135,6 @@ public class AndroidWalker implements TreeWalkerI {
 		try {
 			return assetManager.open(IRMA_CORE + path.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new InfoException(e, "reading file " + path);
 		}
 	}
