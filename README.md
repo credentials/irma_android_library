@@ -6,7 +6,7 @@ This library is used by
 
  * [irma_android_verifier](https://github.com/credentials/irma_android_verifier/)
  * [irma_android_management](https://github.com/credentials/irma_android_management/)
- * [irma_android_cardproxy](https://github.com/credentials/irma_android_verifier/)
+ * [irma_android_cardproxy](https://github.com/credentials/irma_android_cardproxy/)
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Internal dependencies:
 
 Gradle will take care of the transitive dependencies. However, you must make sure that you [build and install the idemix_library](https://github.com/credentials/idemix_library/) yourself.
 
-The build system depends on gradle version at least 2.1, which is why we've included the gradle wrapper, so you always have the right version.
+The build system depends on gradle version at least 2.2, which is why we've included the gradle wrapper, so you always have the right version.
 
 ## Building
 
