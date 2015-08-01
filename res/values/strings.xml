@@ -7,4 +7,12 @@
 	    <item quantity="one">Pin Incorrect! You have one try left.</item>
 	    <item quantity="other">Pin Incorrect! You have %d tries left.</item>
 	</plurals>
+
+	<string name="irmashape">GUI artifact</string>
+	<string name="issuerlogo">Issuer Logo</string>
+	<string name="validtill">Valid until:</string>
+	<string name="issuer">Issuer</string>
+	<string name="credentialdescription">Credential Description</string>
+	<string name="deletetext">Delete</string>
+	<string name="credential_no_longer_valid">No longer valid</string>
 </resources>

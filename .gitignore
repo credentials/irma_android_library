@@ -4,3 +4,4 @@ build/
 .gradle/
 .settings/
 lint.xml
+*.iml
