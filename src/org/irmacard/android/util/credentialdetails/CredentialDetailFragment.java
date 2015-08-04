@@ -20,10 +20,12 @@
 package org.irmacard.android.util.credentialdetails;
 
 import android.app.Activity;
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,11 +101,11 @@ public class CredentialDetailFragment extends Fragment {
 
 		return rootView;
 	}
-	
+
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		LinearLayout list = (LinearLayout) view
 				.findViewById(R.id.detail_attribute_list);
-		
+
 		TextView issuerName = (TextView) view.findViewById(R.id.detail_issuer_description_name);
 		TextView issuerAddress = (TextView) view.findViewById(R.id.detail_issuer_description_address);
 		TextView issuerEMail = (TextView) view.findViewById(R.id.detail_issuer_description_email);
@@ -117,23 +119,10 @@ public class CredentialDetailFragment extends Fragment {
 		issuerName.setText(issuer.getName());
 		issuerAddress.setText(issuer.getContactAddress());
 		issuerEMail.setText(issuer.getContactEMail());
-		
-		// This is not so nice, rather used a Listview here, but it is not possible
-		// to easily make it not scrollable and show all the items.
-		List<AttributeDescription> attr_desc = credential.getCredentialDescription().getAttributes();
-		Attributes attr_vals = credential.getAttributes();
-		for (int position = 0; position < attr_desc.size(); position++) {
-			View attributeView = inflater.inflate(R.layout.row_attribute, null);
 
-			TextView name = (TextView) attributeView.findViewById(R.id.detail_attribute_name);
-			TextView value = (TextView) attributeView.findViewById(R.id.detail_attribute_value);
-
-			AttributeDescription desc = attr_desc.get(position);
-			name.setText(desc.getName() + ":");
-			value.setText(new String(attr_vals.get(desc.getName())));
-
-			list.addView(attributeView);
-		}
+		// Add the attributes
+		AttributesRenderer renderer = new AttributesRenderer(getActivity().getBaseContext(), inflater);
+		renderer.render(credential, list, false, null);
 
 		// Display expiry
 		if (credential.getAttributes().isValid()) {
