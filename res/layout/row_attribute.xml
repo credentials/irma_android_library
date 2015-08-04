@@ -8,7 +8,9 @@
     <TextView
         android:id="@+id/detail_attribute_name"
         style="@style/DetailHeading.Table"
-        android:paddingBottom="5sp" />
+        android:paddingBottom="2sp"
+        android:singleLine="true"
+        android:scrollHorizontally="true" />
 
     <TextView
         android:id="@+id/detail_attribute_value"
