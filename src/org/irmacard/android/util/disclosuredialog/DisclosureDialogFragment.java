@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public class DisclosureDialogFragment extends DialogFragment {
 	private HashMap<CredentialPackage,Attributes> credentials;
-	private String verifier;
 	private DisclosureDialogListener listener;
 
 	public interface DisclosureDialogListener {
@@ -39,16 +38,13 @@ public class DisclosureDialogFragment extends DialogFragment {
 	 * interface.
 	 *
 	 * @param credentials A hashmap in which the keys are the credentials and the values the disclosed attributes.
-	 * @param verifier A string identifying the verifier.
 	 * @return The new dialog.
 	 */
-	public static DisclosureDialogFragment newInstance(HashMap<CredentialPackage,Attributes> credentials, String
-			verifier) {
+	public static DisclosureDialogFragment newInstance(HashMap<CredentialPackage,Attributes> credentials) {
 		DisclosureDialogFragment dialog = new DisclosureDialogFragment();
 
 		Bundle args = new Bundle();
 		args.putSerializable("credentials", credentials);
-		args.putString("verifier", verifier);
 		dialog.setArguments(args);
 
 		return dialog;
@@ -59,7 +55,6 @@ public class DisclosureDialogFragment extends DialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		verifier = getArguments().getString("verifier");
 		credentials = (HashMap<CredentialPackage, Attributes>) getArguments().getSerializable("credentials");
 	}
 
@@ -76,7 +71,7 @@ public class DisclosureDialogFragment extends DialogFragment {
 		}
 
 		String question1 = getResources()
-				.getQuantityString(R.plurals.disclose_question_1, credentials.size(), verifier);
+				.getQuantityString(R.plurals.disclose_question_1, credentials.size());
 		((TextView) view.findViewById(R.id.disclosure_question_1)).setText(question1);
 
 		return new AlertDialog.Builder(getActivity())

@@ -18,9 +18,9 @@
 
 	<plurals name="disclose_question_1">
 		<item quantity="one">Of the following credential, the highlighted attributes will be sent to the
-			verifier at %s.</item>
+			verifier.</item>
 		<item quantity="other">Of the following credentials, the highlighted attributes will be sent to the
-			verifier at %s.</item>
+			verifier.</item>
 	</plurals>
 	<string name="disclose_question_2">Are you sure you want to disclose these attributes?</string>
 </resources>
