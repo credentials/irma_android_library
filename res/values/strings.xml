@@ -8,6 +8,10 @@
 	    <item quantity="other">Pin Incorrect! You have %d tries left.</item>
 	</plurals>
 
+	<string name="irmalogo">IRMA Logo</string>
+	<string name="verifierlogo">Verifier Logo</string>
+	<string name="actorlogo">Actor Logo</string>
+	<string name="actionimage">Action Image</string>
 	<string name="irmashape">GUI artifact</string>
 	<string name="issuerlogo">Issuer Logo</string>
 	<string name="validtill">Valid until:</string>
@@ -15,6 +19,8 @@
 	<string name="credentialdescription">Credential Description</string>
 	<string name="deletetext">Delete</string>
 	<string name="credential_no_longer_valid">No longer valid</string>
+	<string name="no_logs_available">no log items found</string>
+	<string name="error_logs_not_read">log could not be read</string>
 
 	<plurals name="disclose_question_1">
 		<item quantity="one">Of the following credential, the highlighted attributes will be sent to the
