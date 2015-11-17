@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
-    compile "org.irmacard.idemix:idemix_terminal:0.10.1"
+    compile "org.irmacard.idemix:idemix_terminal:0.10.2"
 }
 
 android {
