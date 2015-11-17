@@ -5,3 +5,4 @@ build/
 .settings/
 lint.xml
 *.iml
+.idea/
