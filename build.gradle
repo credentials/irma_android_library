@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = "0.9.2"
+version = "0.10.0"
 group = "org.irmacard.android"
 
 buildscript {
@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
-    compile "org.irmacard.idemix:idemix_terminal:0.10.2"
+    compile "org.irmacard.idemix:idemix_terminal:0.11.0"
 }
 
 android {
