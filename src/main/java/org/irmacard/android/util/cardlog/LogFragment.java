@@ -30,26 +30,26 @@
 
 package org.irmacard.android.util.cardlog;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
+import com.paging.listview.PagingListView;
 import org.irmacard.android.util.R;
 import org.irmacard.credentials.util.log.LogEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class LogFragment extends Fragment {	
+public class LogFragment extends Fragment {
 	private LogListAdapter listAdapter;
 	private List<LogEntry> logs = null;
-	private ListView listView;
 
 	public static final String ARG_LOG = "log";
+	private static int PAGE_COUNT = 20;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -75,7 +75,7 @@ public class LogFragment extends Fragment {
 			}
 		}
 
-	    listAdapter = new LogListAdapter(getActivity(), logs);
+	    listAdapter = new LogListAdapter(getActivity());
 	}
 	
 	@Override
@@ -84,8 +84,38 @@ public class LogFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_log,
 				container, false);
 
-		ListView list = (ListView) rootView.findViewById(R.id.log_list);
+		final PagingListView list = (PagingListView) rootView.findViewById(R.id.log_list);
 		TextView no_items = (TextView) rootView.findViewById(R.id.log_no_log);
+
+		list.setAdapter(listAdapter);
+		list.setHasMoreItems(true);
+		list.setPagingableListener(new PagingListView.Pagingable() {
+			private int index = 0;
+
+			@Override
+			public void onLoadMoreItems() {
+				if (index >= logs.size()) {
+					list.onFinishLoading(false, null);
+					return;
+				}
+
+				new AsyncTask<Void,Void,List<LogEntry>>() {
+					@Override protected List<LogEntry> doInBackground(Void... args) {
+						List<LogEntry> items = logs.subList(index, Math.min(index+PAGE_COUNT, logs.size()));
+						index += PAGE_COUNT;
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
+						return items;
+					}
+					@Override protected void onPostExecute(List<LogEntry> views) {
+						list.onFinishLoading(true, views);
+					}
+				}.execute();
+			}
+		});
 
 		if(logs == null || logs.isEmpty()) {
 			list.setVisibility(View.INVISIBLE);
@@ -98,11 +128,5 @@ public class LogFragment extends Fragment {
 			no_items.setVisibility(View.INVISIBLE);
 		}
 		return rootView;
-	}
-	
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		listView = (ListView) view
-				.findViewById(R.id.log_list);
-		listView.setAdapter(listAdapter);
 	}
 }

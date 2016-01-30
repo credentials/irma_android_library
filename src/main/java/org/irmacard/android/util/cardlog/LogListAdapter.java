@@ -36,39 +36,28 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import org.irmacard.android.util.credentials.AndroidWalker;
+import com.paging.listview.PagingBaseAdapter;
 import org.irmacard.android.util.R;
+import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.util.log.IssueLogEntry;
 import org.irmacard.credentials.util.log.LogEntry;
 import org.irmacard.credentials.util.log.RemoveLogEntry;
 import org.irmacard.credentials.util.log.VerifyLogEntry;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class LogListAdapter extends BaseAdapter {
+public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 	private static LayoutInflater inflater = null;
 	private AndroidWalker aw;
-
-	private List<LogEntry> logs;
 	private Activity activity;
 
-	public LogListAdapter(Activity activity,
-			List<LogEntry> credentials) {
+	public LogListAdapter(Activity activity) {
 		inflater = (LayoutInflater) activity
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		if (credentials != null) {
-			this.logs = credentials;
-		} else {
-			this.logs = new ArrayList<LogEntry>();
-		}
 
 		this.activity = activity;
 		aw = new AndroidWalker(activity.getResources().getAssets());
@@ -76,13 +65,13 @@ public class LogListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return logs.size();
+		return items.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		return position;
+		return items.get(position);
 	}
 
 	@Override
@@ -110,7 +99,7 @@ public class LogListAdapter extends BaseAdapter {
 
 		attributesList.removeAllViews();
 
-		LogEntry log = logs.get(position);
+		LogEntry log = items.get(position);
 		String header_text = "";
 		int actionImageResource = R.drawable.irma_icon_warning_064px;
 		HashMap<String, Boolean> attributesDisclosed = new HashMap<String, Boolean>();

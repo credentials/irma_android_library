@@ -10,11 +10,11 @@
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/irmashape"
         android:src="@drawable/whiteshaperounded" />
-    
-    <ListView
-            android:id="@+id/log_list"
+
+    <com.paging.listview.PagingListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/log_list"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:dividerHeight="0dp"
