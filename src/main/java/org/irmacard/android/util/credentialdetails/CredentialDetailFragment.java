@@ -31,12 +31,10 @@
 package org.irmacard.android.util.credentialdetails;
 
 import android.app.Activity;
-import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +43,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.irmacard.android.util.R;
-import org.irmacard.android.util.credentials.AndroidWalker;
+import org.irmacard.android.util.credentials.AndroidFileReader;
 import org.irmacard.android.util.credentials.CredentialPackage;
-import org.irmacard.credentials.Attributes;
-import org.irmacard.credentials.info.AttributeDescription;
 import org.irmacard.credentials.info.CredentialDescription;
 import org.irmacard.credentials.info.IssuerDescription;
 
@@ -56,7 +52,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * A fragment representing a single Credential detail screen. This fragment is
@@ -68,7 +63,6 @@ public class CredentialDetailFragment extends Fragment {
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
 	 */
-	public static final String ARG_ITEM_ID = "item_id";
 	public static final String ARG_ITEM = "item";
 	
 	public interface Callbacks {
@@ -78,8 +72,8 @@ public class CredentialDetailFragment extends Fragment {
 		void onDeleteCredential(CredentialDescription cd);
 	}
 
-	CredentialPackage credential;
-	AndroidWalker aw;
+	private CredentialPackage credential;
+	private AndroidFileReader fileReader;
 
 	private LayoutInflater inflater;
 	private CredentialDetailFragment.Callbacks mCallbacks;
@@ -99,7 +93,7 @@ public class CredentialDetailFragment extends Fragment {
 			credential = (CredentialPackage) getArguments().getSerializable(ARG_ITEM);
 		}
 		
-		aw = new AndroidWalker(getResources().getAssets());
+		fileReader = new AndroidFileReader(this.getActivity());
 	}
 
 	@Override
@@ -157,7 +151,7 @@ public class CredentialDetailFragment extends Fragment {
 		credentialDescription.setText(credential.getCredentialDescription().getDescription());
 		
 		// Setting logo of issuer
-		Bitmap logo = aw.getIssuerLogo(credential.getCredentialDescription()
+		Bitmap logo = fileReader.getIssuerLogo(credential.getCredentialDescription()
 				.getIssuerDescription());
 
 		if(logo != null) {

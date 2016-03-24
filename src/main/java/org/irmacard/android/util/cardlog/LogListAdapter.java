@@ -41,7 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.paging.listview.PagingBaseAdapter;
 import org.irmacard.android.util.R;
-import org.irmacard.android.util.credentials.AndroidWalker;
+import org.irmacard.android.util.credentials.AndroidFileReader;
 import org.irmacard.credentials.util.log.IssueLogEntry;
 import org.irmacard.credentials.util.log.LogEntry;
 import org.irmacard.credentials.util.log.RemoveLogEntry;
@@ -52,7 +52,7 @@ import java.util.HashMap;
 
 public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 	private static LayoutInflater inflater = null;
-	private AndroidWalker aw;
+	private AndroidFileReader fileReader;
 	private Activity activity;
 
 	public LogListAdapter(Activity activity) {
@@ -60,7 +60,7 @@ public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		this.activity = activity;
-		aw = new AndroidWalker(activity.getResources().getAssets());
+		fileReader = new AndroidFileReader(activity);
 	}
 
 	@Override
@@ -115,8 +115,7 @@ public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 			// This is not so nice, rather used a Listview here, but it is not possible
 			// to easily make it not scrollable and show all the items.
 			for (String attr : attributesDisclosed.keySet()) {
-				View item_view = inflater.inflate(R.layout.log_disclosure_item,
-						null);
+				View item_view = inflater.inflate(R.layout.log_disclosure_item, null);
 
 				TextView attribute = (TextView) item_view
 						.findViewById(R.id.log_disclosure_attribute_name);
@@ -124,7 +123,7 @@ public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 						.findViewById(R.id.log_disclosure_mode);
 
 				attribute.setText(attr);
-				String disclosure_text = "";
+				String disclosure_text;
 				if (attributesDisclosed.get(attr)) {
 					disclosure_text = "disclosed";
 					mode.setTypeface(null, Typeface.BOLD);
@@ -147,7 +146,7 @@ public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 		} else if(log instanceof IssueLogEntry) {
 			header_text = "Issued: ";
 			actionImageResource = R.drawable.irma_icon_warning_064px;
-			actorLogo.setImageBitmap(aw.getIssuerLogo(log.getCredential()
+			actorLogo.setImageBitmap(fileReader.getIssuerLogo(log.getCredential()
 					.getIssuerDescription()));
 		}
 
