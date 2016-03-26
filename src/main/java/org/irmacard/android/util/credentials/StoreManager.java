@@ -102,17 +102,17 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	}
 
 
-	private static void downloadSync(Iterable<String> issuers, Iterable<String> credentials)
+	private static void downloadSync(Iterable<IssuerIdentifier> issuers, Iterable<CredentialIdentifier> credentials)
 			throws InfoException, IOException {
 		// This also downloads the issuer description
-		for (String issuer: issuers) {
+		for (IssuerIdentifier issuer: issuers) {
 			if (DescriptionStore.getInstance().getIssuerDescription(issuer) == null)
 				DescriptionStore.getInstance().downloadIssuerDescription(issuer);
 			if (!IdemixKeyStore.getInstance().containsPublicKey(issuer))
 				IdemixKeyStore.getInstance().downloadIssuer(issuer);
 		}
 
-		for (String credential : credentials)
+		for (CredentialIdentifier credential : credentials)
 			if (DescriptionStore.getInstance().getCredentialDescription(credential) == null)
 				DescriptionStore.getInstance().downloadCredentialDescription(credential);
 	}
@@ -124,8 +124,8 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	 * @param credentials Credentials to download
 	 * @param handler Handler to communicate results to
 	 */
-	public static void download(final Iterable<String> issuers,
-	                            final Iterable<String> credentials,
+	public static void download(final Iterable<IssuerIdentifier> issuers,
+	                            final Iterable<CredentialIdentifier> credentials,
 	                            final DownloadHandler handler) {
 		new AsyncTask<Void,Void,Exception>() {
 			@Override protected Exception doInBackground(Void... params) {
