@@ -1,3 +1,33 @@
+/*
+ * Copyright (c) 2015, the IRMA Team
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ *  Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ *  Neither the name of the IRMA project nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.irmacard.android.util.credentials;
 
 import android.content.Context;
@@ -34,9 +64,7 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 
 	@Override
 	public void saveCredentialDescription(CredentialDescription cd, String xml) {
-		String issuer = cd.getIssuerID();
-
-		File issuesDir = new File(getIssuerPath(issuer), "Issues/" + cd.getCredentialID());
+		File issuesDir = new File(getIssuerPath(cd.getIdentifier().getIssuerIdentifier()), "Issues/" + cd.getCredentialID());
 		if (!issuesDir.mkdirs() && !issuesDir.isDirectory())
 			throw new RuntimeException("Could not create issuing path");
 
@@ -51,7 +79,7 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 
 	@Override
 	public void saveIssuerDescription(IssuerDescription issuer, String xml, InputStream logo) {
-		File issuerDir = getIssuerPath(issuer.getID());
+		File issuerDir = getIssuerPath(issuer.getIdentifier());
 		writeString(issuerDir, "description.xml", xml);
 		writeStream(issuerDir, "logo.png", logo);
 	}
@@ -59,7 +87,7 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	@Override
 	public void saveIdemixKey(IssuerDescription issuer,
 	                          String key, String groupParameters, String systemParameters) {
-		File issuerDir = getIssuerPath(issuer.getID());
+		File issuerDir = getIssuerPath(issuer.getIdentifier());
 		writeString(issuerDir, IdemixKeyStore.PUBLIC_KEY_FILE, key);
 		writeString(issuerDir, IdemixKeyStore.GROUP_PARAMS_FILE, groupParameters);
 		writeString(issuerDir, IdemixKeyStore.SYSTEM_PARAMS_FILE, systemParameters);
@@ -91,11 +119,11 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 		}
 	}
 
-	private File getIssuerPath(String issuer) {
+	private File getIssuerPath(IssuerIdentifier issuer) {
 		File store = context.getDir("store", Context.MODE_PRIVATE);
-		File verifier = new File(store, issuer);
+		File verifier = new File(store, issuer.getPath(false));
 
-		if (!verifier.mkdir() && !verifier.isDirectory())
+		if (!verifier.mkdirs() && !verifier.isDirectory())
 			throw new RuntimeException("Could not create issuer path for '" + issuer + "' in storage");
 
 		return verifier;
