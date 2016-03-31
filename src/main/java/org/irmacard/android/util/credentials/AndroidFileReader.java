@@ -37,7 +37,6 @@ import android.graphics.BitmapFactory;
 import org.irmacard.credentials.info.FileReader;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
-import org.irmacard.credentials.info.VerificationDescription;
 
 import java.io.*;
 import java.util.Arrays;
@@ -111,23 +110,10 @@ public class AndroidFileReader implements FileReader {
 
 	public Bitmap getIssuerLogo(IssuerDescription issuer) {
 		Bitmap logo = null;
-		String issuerID = issuer.getID();
+		String path = issuer.getIdentifier().getPath(false);
 
 		try {
-			logo = BitmapFactory.decodeStream(retrieveFile(issuerID + "/logo.png"));
-		} catch (InfoException e) {
-			e.printStackTrace();
-		}
-
-		return logo;
-	}
-
-	public Bitmap getVerifierLogo(VerificationDescription verification) {
-		Bitmap logo = null;
-		String verifierID = verification.getVerifierID();
-
-		try {
-			logo = BitmapFactory.decodeStream(retrieveFile(verifierID + "/logo.png"));
+			logo = BitmapFactory.decodeStream(retrieveFile(path + "/logo.png"));
 		} catch (InfoException e) {
 			e.printStackTrace();
 		}

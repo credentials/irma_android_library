@@ -33,10 +33,9 @@ package org.irmacard.android.util.disclosuredialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -45,11 +44,8 @@ import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentialdetails.AttributesRenderer;
 import org.irmacard.android.util.credentials.CredentialPackage;
 import org.irmacard.credentials.Attributes;
-import org.irmacard.idemix.util.VerificationSetupData;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * DialogFragment for asking permission of a user to disclose specified attributes.
