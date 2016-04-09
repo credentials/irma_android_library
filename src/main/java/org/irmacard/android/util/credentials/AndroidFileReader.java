@@ -108,6 +108,14 @@ public class AndroidFileReader implements FileReader {
 		return files != null && Arrays.asList(files).contains(filename);
 	}
 
+	@Override
+	public boolean containsFile(String path) {
+		String[] parts = path.split("/");
+		String filename = parts[parts.length-1];
+		path = path.substring(0, path.length() - filename.length() - 1);
+		return containsFile(path, filename);
+	}
+
 	public Bitmap getIssuerLogo(IssuerDescription issuer) {
 		Bitmap logo = null;
 		String path = issuer.getIdentifier().getPath(false);

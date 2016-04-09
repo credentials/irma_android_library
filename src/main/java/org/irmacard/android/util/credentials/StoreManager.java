@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Manager for {@link DescriptionStore} and {@link IdemixKeyStore}: handles downloading new items
@@ -85,16 +86,14 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	}
 
 	@Override
-	public void saveIdemixKey(IssuerDescription issuer,
-	                          String key, String groupParameters, String systemParameters) {
+	public void saveIdemixKey(IssuerDescription issuer, String key, int counter) {
 		File issuerDir = getIssuerPath(issuer.getIdentifier());
-		writeString(issuerDir, IdemixKeyStore.PUBLIC_KEY_FILE, key);
-		writeString(issuerDir, IdemixKeyStore.GROUP_PARAMS_FILE, groupParameters);
-		writeString(issuerDir, IdemixKeyStore.SYSTEM_PARAMS_FILE, systemParameters);
+		writeString(issuerDir, String.format(IdemixKeyStore.PUBLIC_KEY_FILE, counter), key);
 	}
 
 	private void writeString(File path, String filename, String contents) {
 		try {
+			new File(path + "/PublicKeys").mkdirs();
 			FileOutputStream fos = new FileOutputStream(new File(path, filename));
 			fos.write(contents.getBytes());
 			fos.close();
@@ -130,14 +129,20 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	}
 
 
-	private static void downloadSync(Iterable<IssuerIdentifier> issuers, Iterable<CredentialIdentifier> credentials)
+	private static void downloadSync(Iterable<IssuerIdentifier> issuers,
+	                                 Iterable<CredentialIdentifier> credentials,
+	                                 Map<IssuerIdentifier, Integer> keys)
 			throws InfoException, IOException {
 		// This also downloads the issuer description
 		for (IssuerIdentifier issuer: issuers) {
 			if (DescriptionStore.getInstance().getIssuerDescription(issuer) == null)
 				DescriptionStore.getInstance().downloadIssuerDescription(issuer);
-			if (!IdemixKeyStore.getInstance().containsPublicKey(issuer))
-				IdemixKeyStore.getInstance().downloadIssuer(issuer);
+		}
+
+		for (IssuerIdentifier issuer : keys.keySet()) {
+			int counter = keys.get(issuer);
+			if (!IdemixKeyStore.getInstance().containsPublicKey(issuer, counter))
+				IdemixKeyStore.getInstance().downloadPublicKey(issuer, counter);
 		}
 
 		for (CredentialIdentifier credential : credentials)
@@ -154,11 +159,12 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	 */
 	public static void download(final Iterable<IssuerIdentifier> issuers,
 	                            final Iterable<CredentialIdentifier> credentials,
+	                            final Map<IssuerIdentifier, Integer> keys,
 	                            final DownloadHandler handler) {
 		new AsyncTask<Void,Void,Exception>() {
 			@Override protected Exception doInBackground(Void... params) {
 				try {
-					downloadSync(issuers, credentials);
+					downloadSync(issuers, credentials, keys);
 					return null;
 				} catch (Exception e) {
 					return e;
@@ -181,6 +187,6 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	 * @param handler Handler to communicate results to
 	 */
 	public static void download(final SessionRequest request, final DownloadHandler handler) {
-		download(request.getIssuerList(), request.getCredentialList(), handler);
+		download(request.getIssuerList(), request.getCredentialList(), request.getPublicKeyList(), handler);
 	}
 }

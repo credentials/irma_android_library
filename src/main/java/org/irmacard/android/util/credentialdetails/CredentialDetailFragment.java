@@ -130,7 +130,7 @@ public class CredentialDetailFragment extends Fragment {
 		renderer.render(credential, list, false, null);
 
 		// Display expiry
-		if (credential.getAttributes().isValid()) {
+		if (!credential.getAttributes().isExpired()) {
 			DateFormat sdf = SimpleDateFormat.getDateInstance(DateFormat.LONG);
 			Date expirydate = credential.getAttributes().getExpiryDate();
 			validityValue.setText(sdf.format(expirydate));
