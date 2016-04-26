@@ -86,14 +86,45 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	}
 
 	@Override
+	public void saveSchemeManager(SchemeManager schemeManager) {
+		File store = context.getDir("store", Context.MODE_PRIVATE);
+		File path = new File(store, schemeManager.getName());
+		if (!path.mkdirs() && !path.isDirectory())
+			throw new RuntimeException("Could not create scheme manager path");
+
+		writeString(path, "description.xml", schemeManager.getXml());
+	}
+
+	/**
+	 * Returns true if the specified scheme manager is stored in internal storage, as opposed to
+	 * the app assets (from which it cannot programmatically be deleted).
+	 */
+	public boolean canRemoveSchemeManager(String manager) {
+		return new File(context.getDir("store", Context.MODE_PRIVATE), manager+"/description.xml").exists();
+	}
+
+	public boolean removeSchemeManager(String manager) {
+		try {
+			DescriptionStore.getInstance().removeSchemeManager(manager);
+		} catch (InfoException e) {
+			throw new RuntimeException(e);
+		}
+
+		return new File(context.getDir("store", Context.MODE_PRIVATE), manager+"/description.xml").delete();
+	}
+
+	@Override
 	public void saveIdemixKey(IssuerDescription issuer, String key, int counter) {
 		File issuerDir = getIssuerPath(issuer.getIdentifier());
+		File path = new File(issuerDir, "PublicKeys");
+		if (!path.mkdirs() && !path.isDirectory())
+			throw new RuntimeException("Could not create public key path");
+
 		writeString(issuerDir, String.format(IdemixKeyStore.PUBLIC_KEY_FILE, counter), key);
 	}
 
 	private void writeString(File path, String filename, String contents) {
 		try {
-			new File(path + "/PublicKeys").mkdirs();
 			FileOutputStream fos = new FileOutputStream(new File(path, filename));
 			fos.write(contents.getBytes());
 			fos.close();
@@ -134,20 +165,23 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	                                 Map<IssuerIdentifier, Integer> keys)
 			throws InfoException, IOException {
 		// This also downloads the issuer description
-		for (IssuerIdentifier issuer: issuers) {
-			if (DescriptionStore.getInstance().getIssuerDescription(issuer) == null)
-				DescriptionStore.getInstance().downloadIssuerDescription(issuer);
+		if (issuers != null)
+			for (IssuerIdentifier issuer: issuers)
+				if (DescriptionStore.getInstance().getIssuerDescription(issuer) == null)
+					DescriptionStore.getInstance().downloadIssuerDescription(issuer);
+
+		if (keys != null) {
+			for (IssuerIdentifier issuer : keys.keySet()) {
+				int counter = keys.get(issuer);
+				if (!IdemixKeyStore.getInstance().containsPublicKey(issuer, counter))
+					IdemixKeyStore.getInstance().downloadPublicKey(issuer, counter);
+			}
 		}
 
-		for (IssuerIdentifier issuer : keys.keySet()) {
-			int counter = keys.get(issuer);
-			if (!IdemixKeyStore.getInstance().containsPublicKey(issuer, counter))
-				IdemixKeyStore.getInstance().downloadPublicKey(issuer, counter);
-		}
-
-		for (CredentialIdentifier credential : credentials)
-			if (DescriptionStore.getInstance().getCredentialDescription(credential) == null)
-				DescriptionStore.getInstance().downloadCredentialDescription(credential);
+		if (credentials != null)
+			for (CredentialIdentifier credential : credentials)
+				if (DescriptionStore.getInstance().getCredentialDescription(credential) == null)
+					DescriptionStore.getInstance().downloadCredentialDescription(credential);
 	}
 
 	/**
@@ -161,9 +195,23 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	                            final Iterable<CredentialIdentifier> credentials,
 	                            final Map<IssuerIdentifier, Integer> keys,
 	                            final DownloadHandler handler) {
+		download(null, issuers, credentials, keys, handler);
+	}
+
+	public static void downloadSchemeManager(final String url, final DownloadHandler handler) {
+		download(url, null, null, null, handler);
+	}
+
+	private static void download(final String schemeManagerUrl,
+	                             final Iterable<IssuerIdentifier> issuers,
+	                             final Iterable<CredentialIdentifier> credentials,
+	                             final Map<IssuerIdentifier, Integer> keys,
+	                             final DownloadHandler handler) {
 		new AsyncTask<Void,Void,Exception>() {
 			@Override protected Exception doInBackground(Void... params) {
 				try {
+					if (schemeManagerUrl != null)
+						DescriptionStore.getInstance().downloadSchemeManager(schemeManagerUrl);
 					downloadSync(issuers, credentials, keys);
 					return null;
 				} catch (Exception e) {
@@ -172,6 +220,9 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 			}
 
 			@Override protected void onPostExecute(Exception e) {
+				if (handler == null)
+					return;
+
 				if (e == null)
 					handler.onSuccess();
 				else
@@ -187,6 +238,6 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	 * @param handler Handler to communicate results to
 	 */
 	public static void download(final SessionRequest request, final DownloadHandler handler) {
-		download(request.getIssuerList(), request.getCredentialList(), request.getPublicKeyList(), handler);
+		download(null, request.getIssuerList(), request.getCredentialList(), request.getPublicKeyList(), handler);
 	}
 }

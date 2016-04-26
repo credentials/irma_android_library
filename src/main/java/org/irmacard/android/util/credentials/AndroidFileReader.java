@@ -59,7 +59,6 @@ public class AndroidFileReader implements FileReader {
 		if (path.length() > 0 && !path.startsWith("/"))
 			path = "/" + path;
 
-		Exception ex;
 		try {
 			return assets.open(assetPath + path);
 		} catch (IOException e) { /** Ignore absence of file, try internal storage next */ }
