@@ -146,8 +146,10 @@ public class LogListAdapter extends PagingBaseAdapter<LogEntry> {
 		} else if(log instanceof IssueLogEntry) {
 			header_text = "Issued: ";
 			actionImageResource = R.drawable.irma_icon_warning_064px;
-			actorLogo.setImageBitmap(fileReader.getIssuerLogo(log.getCredential()
-					.getIssuerDescription()));
+			if (log.getCredential().getIssuerDescription() != null) {
+				actorLogo.setImageBitmap(
+						fileReader.getIssuerLogo(log.getCredential().getIssuerDescription()));
+			}
 		}
 
 		header_text += log.getCredential().getName();

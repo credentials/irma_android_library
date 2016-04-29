@@ -67,14 +67,6 @@ public class LogFragment extends Fragment {
 			logs = (List<LogEntry>) getArguments().getSerializable(ARG_LOG);
 		}
 
-		if (logs == null) {
-			Log.i("blaat", "No credentials available yet");
-		} else {
-			for (LogEntry cp : logs) {
-				Log.i("blaat", cp.toString());
-			}
-		}
-
 	    listAdapter = new LogListAdapter(getActivity());
 	}
 	

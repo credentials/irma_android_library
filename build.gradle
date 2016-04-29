@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = "0.13.2"
+version = "0.13.3"
 group = "org.irmacard.android"
 
 buildscript {
@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:23+'
-    compile('org.irmacard.api:irma_api_common:0.3.4') {
+    compile('org.irmacard.api:irma_api_common:0.3.5') {
         // Android has its own HttpClient, so exclude the one that credentials_api includes
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
@@ -49,7 +49,7 @@ android {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.12'
 }
 
 if ( project.hasProperty("mavenRepositoryIRMA") ) {
