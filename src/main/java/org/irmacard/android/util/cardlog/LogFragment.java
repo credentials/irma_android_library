@@ -103,7 +103,7 @@ public class LogFragment extends Fragment {
 						return items;
 					}
 					@Override protected void onPostExecute(List<LogEntry> views) {
-						list.onFinishLoading(true, views);
+						list.onFinishLoading(index+PAGE_COUNT < logs.size(), views);
 					}
 				}.execute();
 			}
