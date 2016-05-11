@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = "0.13.4"
+version = "0.13.5"
 group = "org.irmacard.android"
 
 buildscript {
@@ -24,11 +24,13 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23+'
-    compile('org.irmacard.api:irma_api_common:0.3.5') {
-        // Android has its own HttpClient, so exclude the one that credentials_api includes
+    compile('com.google.http-client:google-http-client-android:1.20.0') {
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
+    compile('org.irmacard.api:irma_api_common:0.3.6') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    compile 'com.android.support:support-v4:23+'
     compile 'com.github.nicolasjafelle:paginglistview:1.2'
 }
 
@@ -45,6 +47,10 @@ android {
     lintOptions {
         // Ignore external package references
         disable 'InvalidPackage'
+    }
+
+    dexOptions {
+        incremental true
     }
 }
 
