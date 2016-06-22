@@ -29,4 +29,5 @@
 			verifier.</item>
 	</plurals>
 	<string name="disclose_question_2">Are you sure you want to disclose these attributes?</string>
+	<string name="schememanager">Scheme Manager</string>
 </resources>

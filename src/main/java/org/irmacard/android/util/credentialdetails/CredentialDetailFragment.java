@@ -45,8 +45,7 @@ import android.widget.TextView;
 import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentials.AndroidFileReader;
 import org.irmacard.android.util.credentials.CredentialPackage;
-import org.irmacard.credentials.info.CredentialDescription;
-import org.irmacard.credentials.info.IssuerDescription;
+import org.irmacard.credentials.info.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -117,13 +116,16 @@ public class CredentialDetailFragment extends Fragment {
 		TextView credentialDescription = (TextView) view.findViewById(R.id.detail_credential_desc_text);
 		TextView validityValue = (TextView) view.findViewById(R.id.detail_validity_value);
 		TextView validityRemaining = (TextView) view.findViewById(R.id.detail_validity_remaining);
+		TextView schemeManagerName = (TextView) view.findViewById(R.id.detail_schememanager_text);
 		ImageView issuerLogo = (ImageView) view.findViewById(R.id.detail_issuer_logo);
 		Button deleteButton = (Button) view.findViewById(R.id.detail_delete_button);
-		
+
 		IssuerDescription issuer = credential.getCredentialDescription().getIssuerDescription();
 		issuerName.setText(issuer.getName());
 		issuerAddress.setText(issuer.getContactAddress());
 		issuerEMail.setText(issuer.getContactEMail());
+
+		schemeManagerName.setText(issuer.getIdentifier().getSchemeManager().getHumanReadableName());
 
 		// Add the attributes
 		AttributesRenderer renderer = new AttributesRenderer(getActivity().getBaseContext(), inflater);
