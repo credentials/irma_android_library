@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-version = "0.13.7"
+version = "0.13.8"
 group = "org.irmacard.android"
 
 buildscript {
@@ -27,7 +27,7 @@ dependencies {
     compile('com.google.http-client:google-http-client-android:1.20.0') {
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    compile('org.irmacard.api:irma_api_common:0.3.8') {
+    compile('org.irmacard.api:irma_api_common:0.3.9') {
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
     compile 'com.android.support:support-v4:23+'
