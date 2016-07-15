@@ -104,11 +104,7 @@ public class StoreManager implements DescriptionStoreSerializer, IdemixKeyStoreS
 	}
 
 	public void removeSchemeManager(String manager) {
-		try {
-			DescriptionStore.getInstance().removeSchemeManager(manager);
-		} catch (InfoException e) {
-			throw new RuntimeException(e);
-		}
+		DescriptionStore.getInstance().removeSchemeManager(manager);
 
 		deleteRecursively(new File(context.getDir("store", Context.MODE_PRIVATE), manager));
 	}
