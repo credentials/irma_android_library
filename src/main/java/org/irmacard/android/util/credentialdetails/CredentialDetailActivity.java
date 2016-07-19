@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentials.CredentialPackage;
+import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.info.CredentialDescription;
 
 /**
@@ -50,8 +51,6 @@ import org.irmacard.credentials.info.CredentialDescription;
  */
 public class CredentialDetailActivity extends FragmentActivity implements
 		CredentialDetailFragment.Callbacks {
-	CredentialPackage credential;
-
 	public static final String ARG_RESULT_DELETE = "deletedCred";
 	public static final int RESULT_DELETE = RESULT_FIRST_USER;
 
@@ -75,16 +74,19 @@ public class CredentialDetailActivity extends FragmentActivity implements
 		if (savedInstanceState == null) {
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
-			credential = (CredentialPackage) getIntent().getSerializableExtra(
-					CredentialDetailFragment.ARG_ITEM);
+
+			Attributes attributes = (Attributes) getIntent().getSerializableExtra(CredentialDetailFragment.ATTRIBUTES);
+			int hashCode = getIntent().getIntExtra(CredentialDetailFragment.HASHCODE, 0);
+
 			Bundle arguments = new Bundle();
-			arguments.putSerializable(CredentialDetailFragment.ARG_ITEM,
-					credential);
+			arguments.putSerializable(CredentialDetailFragment.ATTRIBUTES, attributes);
+			arguments.putInt(CredentialDetailFragment.HASHCODE, hashCode);
+
 			CredentialDetailFragment fragment = new CredentialDetailFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.credential_detail_container, fragment).commit();
-			getActionBar().setTitle(credential.getCredentialDescription().getName());
+			getActionBar().setTitle(attributes.getCredentialIdentifier().getCredentialName());
 		}
 	}
 
@@ -100,9 +102,9 @@ public class CredentialDetailActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onDeleteCredential(CredentialDescription cd) {
+	public void onDeleteCredential(int hashCode) {
 		Intent data = new Intent(this, CredentialDetailActivity.class);
-		data.putExtra(CredentialDetailActivity.ARG_RESULT_DELETE, cd);
+		data.putExtra(CredentialDetailActivity.ARG_RESULT_DELETE, hashCode);
 		setResult(RESULT_DELETE, data);
 		finish();
 	}

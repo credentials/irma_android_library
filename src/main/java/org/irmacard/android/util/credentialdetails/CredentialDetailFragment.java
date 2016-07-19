@@ -45,6 +45,7 @@ import android.widget.TextView;
 import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentials.AndroidFileReader;
 import org.irmacard.android.util.credentials.CredentialPackage;
+import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.info.*;
 
 import java.text.DateFormat;
@@ -62,16 +63,19 @@ public class CredentialDetailFragment extends Fragment {
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
 	 */
-	public static final String ARG_ITEM = "item";
+	public static final String ATTRIBUTES = "attributes";
+	public static final String HASHCODE = "hashcode";
 	
 	public interface Callbacks {
 		/**
 		 * Callback when credential has to be deleted
 		 */
-		void onDeleteCredential(CredentialDescription cd);
+		void onDeleteCredential(int hashCode);
 	}
 
-	private CredentialPackage credential;
+	private Attributes attributes;
+	private CredentialDescription cd;
+	private int hashCode;
 	private AndroidFileReader fileReader;
 
 	private LayoutInflater inflater;
@@ -88,8 +92,10 @@ public class CredentialDetailFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (getArguments().containsKey(ARG_ITEM)) {
-			credential = (CredentialPackage) getArguments().getSerializable(ARG_ITEM);
+		if (getArguments().containsKey(ATTRIBUTES)) {
+			hashCode = getArguments().getInt(HASHCODE);
+			attributes = (Attributes) getArguments().getSerializable(ATTRIBUTES);
+			cd = attributes.getCredentialDescription();
 		}
 		
 		fileReader = new AndroidFileReader(this.getActivity());
@@ -120,7 +126,7 @@ public class CredentialDetailFragment extends Fragment {
 		ImageView issuerLogo = (ImageView) view.findViewById(R.id.detail_issuer_logo);
 		Button deleteButton = (Button) view.findViewById(R.id.detail_delete_button);
 
-		IssuerDescription issuer = credential.getCredentialDescription().getIssuerDescription();
+		IssuerDescription issuer = cd.getIssuerDescription();
 		issuerName.setText(issuer.getName());
 		issuerAddress.setText(issuer.getContactAddress());
 		issuerEMail.setText(issuer.getContactEMail());
@@ -129,12 +135,12 @@ public class CredentialDetailFragment extends Fragment {
 
 		// Add the attributes
 		AttributesRenderer renderer = new AttributesRenderer(getActivity().getBaseContext(), inflater);
-		renderer.render(credential, list, false, null);
+		renderer.render(attributes, list, false, null);
 
 		// Display expiry
-		if (!credential.getAttributes().isExpired()) {
+		if (!attributes.isExpired()) {
 			DateFormat sdf = SimpleDateFormat.getDateInstance(DateFormat.LONG);
-			Date expirydate = credential.getAttributes().getExpiryDate();
+			Date expirydate = attributes.getExpiryDate();
 			validityValue.setText(sdf.format(expirydate));
 
 			int deltaDays = (int) ((expirydate.getTime() - Calendar
@@ -150,11 +156,10 @@ public class CredentialDetailFragment extends Fragment {
 			validityRemaining.setText("");
 		}
 		
-		credentialDescription.setText(credential.getCredentialDescription().getDescription());
+		credentialDescription.setText(cd.getDescription());
 		
 		// Setting logo of issuer
-		Bitmap logo = fileReader.getIssuerLogo(credential.getCredentialDescription()
-				.getIssuerDescription());
+		Bitmap logo = fileReader.getIssuerLogo(cd.getIssuerDescription());
 
 		if(logo != null) {
 			issuerLogo.setImageBitmap(logo);
@@ -183,6 +188,6 @@ public class CredentialDetailFragment extends Fragment {
 
 	private void clickedDeleteButton() {
 		Log.i("blaat", "Delete button clicked");
-		mCallbacks.onDeleteCredential(credential.getCredentialDescription());
+		mCallbacks.onDeleteCredential(hashCode);
 	}
 }

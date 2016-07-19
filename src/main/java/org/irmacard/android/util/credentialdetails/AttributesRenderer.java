@@ -40,6 +40,7 @@ import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentials.CredentialPackage;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.info.AttributeDescription;
+import org.irmacard.credentials.info.CredentialDescription;
 
 import java.util.List;
 
@@ -68,19 +69,19 @@ public class AttributesRenderer {
 	 * @param disclosedAttributes If specified, those attributes found in the credential but not here will be shown in
 	 *                            light grey to indicate they are not being disclosed.
 	 */
-	public void render(CredentialPackage credential, LinearLayout list, boolean includeTitle, Attributes
+	public void render(Attributes attributes, LinearLayout list, boolean includeTitle, Attributes
 			disclosedAttributes) {
+		CredentialDescription cd = attributes.getCredentialDescription();
+
 		if (includeTitle) {
 			TextView attrName = new TextView(context);
 			attrName.setTextAppearance(context, R.style.DetailHeading);
-			attrName.setText(credential.getCredentialDescription().getName());
+			attrName.setText(cd.getName());
 			attrName.setTextColor(Color.BLACK);
 			list.addView(attrName);
 		}
 
-		List<AttributeDescription> attr_desc = credential.getCredentialDescription().getAttributes();
-		Attributes attr_vals = credential.getAttributes();
-		for (AttributeDescription desc : attr_desc) {
+		for (AttributeDescription desc : cd.getAttributes()) {
 			View attributeView = inflater.inflate(R.layout.row_attribute, null);
 
 			TextView name = (TextView) attributeView.findViewById(R.id.detail_attribute_name);
@@ -101,7 +102,7 @@ public class AttributesRenderer {
 			} else {
 				name.setText(desc.getName() + ":");
 			}
-			value.setText(new String(attr_vals.get(desc.getName())));
+			value.setText(new String(attributes.get(desc.getName())));
 
 			list.addView(attributeView);
 		}

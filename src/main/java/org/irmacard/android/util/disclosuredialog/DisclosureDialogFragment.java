@@ -93,7 +93,7 @@ public class DisclosureDialogFragment extends DialogFragment {
 
 		for (CredentialPackage credential : credentials.keySet()) {
 			Attributes disclosed = credentials.get(credential);
-			renderer.render(credential, list, true, disclosed);
+			renderer.render(credential.getAttributes(), list, true, disclosed);
 		}
 
 		String question1 = getResources()
