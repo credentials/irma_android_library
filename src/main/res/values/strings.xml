@@ -30,4 +30,10 @@
 	</plurals>
 	<string name="disclose_question_2">Are you sure you want to disclose these attributes?</string>
 	<string name="schememanager">Scheme Manager</string>
+	<string name="confirm_delete_question">Are you sure you want to delete this credential? This cannot be
+		undone.
+	</string>
+	<string name="confirm_delete_title">Deleting credential</string>
+	<string name="delete">Delete</string>
+	<string name="cancel">Cancel</string>
 </resources>

@@ -31,6 +31,8 @@
 package org.irmacard.android.util.credentialdetails;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,7 +46,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.irmacard.android.util.R;
 import org.irmacard.android.util.credentials.AndroidFileReader;
-import org.irmacard.android.util.credentials.CredentialPackage;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.info.*;
 
@@ -95,6 +96,8 @@ public class CredentialDetailFragment extends Fragment {
 		if (getArguments().containsKey(ATTRIBUTES)) {
 			hashCode = getArguments().getInt(HASHCODE);
 			attributes = (Attributes) getArguments().getSerializable(ATTRIBUTES);
+			if (attributes == null)
+				throw new NullPointerException("attributes missing from arguments");
 			cd = attributes.getCredentialDescription();
 		}
 		
@@ -188,6 +191,16 @@ public class CredentialDetailFragment extends Fragment {
 
 	private void clickedDeleteButton() {
 		Log.i("blaat", "Delete button clicked");
-		mCallbacks.onDeleteCredential(hashCode);
+
+		new AlertDialog.Builder(this.getActivity())
+				.setTitle(R.string.confirm_delete_title)
+				.setMessage(R.string.confirm_delete_question)
+				.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int id) {
+						mCallbacks.onDeleteCredential(hashCode);
+					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 	}
 }
