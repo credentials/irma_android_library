@@ -6,3 +6,4 @@ build/
 lint.xml
 *.iml
 .idea/
+local.properties
